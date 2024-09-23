@@ -39,7 +39,7 @@ __docformat__ = 'reStructuredText'
 from ctypes import *
 from ctypes.util import find_library
 from enum import IntEnum
-from time import time
+from time import time, sleep
 
 
 class CtypesEnum(IntEnum):
@@ -309,7 +309,7 @@ class PT104(object):
         for channel, conf in self.channels.items():
             self.set_channel(channel, conf['data_type'], conf['nb_wires'])
 
-    def get_value(self, channel, raw_value=False):
+    def get_value(self, channel, raw_value=False, wait_new_value=True):
         """queries the measurement value from the unit
 
         :param channel: channel number (Channels)
@@ -318,7 +318,8 @@ class PT104(object):
         """
         if not self.is_connected:
             return None
-        self._wait_for_conversion(channel)
+        if wait_new_value:
+            self._wait_for_conversion(channel)
         status_channel = libusbpt104.UsbPt104GetValue(self._handle,
                                                       channel,
                                                       byref(self.channels[channel]['value']),
@@ -383,7 +384,7 @@ class PT104(object):
         conversion_time = self.active_channel_count * 0.75
         last_query = self.channels[channel]['last_query']
         while last_query + conversion_time > time():
-            pass
+            sleep(1e-2)  # Release thread for 10ms
         return True
 
     def scale_value(self, value, channel):
