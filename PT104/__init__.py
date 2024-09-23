@@ -118,6 +118,9 @@ else:
     # Open the device through its USB interface.
     libusbpt104.UsbPt104OpenUnit.argtypes = [POINTER(c_short), POINTER(c_char)]
 
+    # Open the device through its IP interface.
+    libusbpt104.UsbPt104OpenUnitViaIp.argtypes = [POINTER(c_short), POINTER(c_char), POINTER(c_char)]
+
     # Specify the sensor type and filtering for a channel.
     libusbpt104.UsbPt104SetChannel.argtypes = [c_short, Channels, DataTypes, c_short]
 
@@ -219,7 +222,7 @@ class PT104(object):
         """
         return self._handle is not None
 
-    def connect(self, serial=b'', interface=CommunicationType.CT_USB):
+    def connect(self, serial=b'', interface=CommunicationType.CT_USB, address=b''):
         """Connect to a PT-104A data acquisition module via USB or Ethernet
 
         .. note:: Ethernet connection is not implemented
@@ -230,8 +233,6 @@ class PT104(object):
         if interface == CommunicationType.CT_ALL:
             raise ValueError('interface must be either CommunicationType.CT_USB or CommunicationType.CT_ETHERNET')
 
-        if interface == CommunicationType.CT_ETHERNET:
-            raise NotImplementedError('interface CommunicationType.CT_ETHERNET is not implemented jet')
 
         if self.is_connected:
             self.disconnect()
@@ -240,9 +241,14 @@ class PT104(object):
 
         if type(serial) is str:
             serial = serial.encode()
-        status_unit = libusbpt104.UsbPt104OpenUnit(byref(self._handle), serial)
+        if type(address) is str:
+            address = address.encode()
+        if interface == CommunicationType.CT_ETHERNET:
+            status_unit = libusbpt104.UsbPt104OpenUnitViaIp(byref(self._handle), serial, address)
+        else:
+            status_unit = libusbpt104.UsbPt104OpenUnit(byref(self._handle), serial)
         if status_unit == 0:
-            print('Picolog PT104 opened successfully')
+            # print('Picolog PT104 opened successfully')
             _ = self.get_unit_info
             self.set_channels()
             return True
