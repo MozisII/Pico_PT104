@@ -18,7 +18,7 @@ CLASSIFIERS = [
 setup(
     author=PT104.__author__,
     author_email="m.schroeder@tu-berlin.de",
-    name='Pico_PT104',
+    name='PT104',
     version=PT104.__version__,
     description='A Python Wrapper for the usbpt104 library from Pico',
     long_description=open(os.path.join(os.path.dirname(__file__), 'README.rst')).read(),
