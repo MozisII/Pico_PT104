@@ -233,7 +233,6 @@ class PT104(object):
         if interface == CommunicationType.CT_ALL:
             raise ValueError('interface must be either CommunicationType.CT_USB or CommunicationType.CT_ETHERNET')
 
-
         if self.is_connected:
             self.disconnect()
 
@@ -241,15 +240,19 @@ class PT104(object):
 
         if type(serial) is str:
             serial = serial.encode()
+        elif not serial:
+            serial = None
         if type(address) is str:
             address = address.encode()
+        elif not address:
+            address = None
         if interface == CommunicationType.CT_ETHERNET:
             status_unit = libusbpt104.UsbPt104OpenUnitViaIp(byref(self._handle), serial, address)
         else:
             status_unit = libusbpt104.UsbPt104OpenUnit(byref(self._handle), serial)
         if status_unit == 0:
             # print('Picolog PT104 opened successfully')
-            _ = self.get_unit_info
+            # _ = self.get_unit_info
             self.set_channels()
             return True
         else:
