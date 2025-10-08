@@ -30,7 +30,7 @@ __author__ = "Martin Schröder"
 __copyright__ = "Copyright 2018, Technische Universität Berlin"
 __credits__ = []
 __license__ = "GPLv3"
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 __maintainer__ = "Martin Schröder"
 __email__ = "m.schroeder@tu-berlin.de"
 __status__ = "Beta"
@@ -98,6 +98,9 @@ class PicoInfo(CtypesEnum):
 
 # load the shared library
 lib_path = find_library('usbpt104')
+if not ('/' in lib_path or '\\' in lib_path):
+    lib_path = './' + lib_path
+
 if lib_path is None:
     raise OSError('shared library usbpt104 not found')
 else:

@@ -23,11 +23,10 @@ setup(
     description='A Python Wrapper for the usbpt104 library from Pico',
     long_description=open(os.path.join(os.path.dirname(__file__), 'README.rst')).read(),
     url='http://www.github.com/trombastic/Pico_PT104',
-    license='GPL version 3',
-    platforms=['OS Independent'],
+    license='GPL-3.0-or-later',
+    platforms=['Windows'],
     classifiers=CLASSIFIERS,
     install_requires=[],
     packages=find_packages(exclude=["project", "project.*"]),
     include_package_data=True,
-    test_suite='runtests.main',
 )
